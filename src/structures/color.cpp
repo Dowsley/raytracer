@@ -9,6 +9,20 @@ Color::Color(double r, double g, double b)
     SetBlue(b);
 }
 
+Color::Color(Vec3 &v)
+{
+    SetRed(v[0]);
+    SetGreen(v[1]);
+    SetBlue(v[2]);
+}
+
+Color::Color(Vec3 v)
+{
+    SetRed(v[0]);
+    SetGreen(v[1]);
+    SetBlue(v[2]);
+}
+
 double Color::ValidateColorValue(double val)
 {
     if (!(val >= 0.0f && val <= 1.0f)) {
