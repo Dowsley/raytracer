@@ -1,7 +1,6 @@
 \.vscode
 Makefile
 \.DS_Store
-\output
 \output.exe
 CMakeFiles
 CMakeLists.txt
@@ -11,3 +10,4 @@ tmp
 notes
 log.txt
 \out
+\output.ppm
