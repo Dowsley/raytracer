@@ -6,4 +6,5 @@ I intend to make this project have its own personality with some 90s/dreamcore/f
 # TODOs:
 - [X] Implement core classes
 - [X] Add PPM image output
+- [X] Add progress indicator
 - [ ] Cast the first rays 

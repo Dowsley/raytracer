@@ -1,4 +1,6 @@
-#include <fstream>
+#define PROGRESS_NUM_BARS 30
+
+#include <iostream>
 
 #include "utils/arithmetics.cpp"
 
@@ -32,7 +34,27 @@ public:
                 );
                 writer->WriteRow(c);
             }
+            LogProgress((double) (j+1) / imageHeight);
         }
+    }
+
+    void LogProgress(float perc) const
+    {
+        if (!(perc >= 0.0f && perc <= 1.0f)) {
+            throw std::invalid_argument("Progress percentage value must be between 0.0f and 1.0f range.");
+        }
+
+        int progress_scaled = Arithmetics::scale(perc, 0.0f, 1.0f, 0.0f, PROGRESS_NUM_BARS);
+
+        std::cout << "["; 
+        for (int i = 0; i < PROGRESS_NUM_BARS; i++) {
+            if (progress_scaled >= i) {
+                std::cout << "=";
+            } else {
+                std::cout << " ";
+            }
+        }
+        std::cout << "]" << " (" << perc * 100 << "%)\n"; 
     }
 
 private:
