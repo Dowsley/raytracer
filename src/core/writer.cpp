@@ -1,6 +1,7 @@
 #include "writer.h"
+#include "../utils/arithmetics.h"
 
-#include <math.h>
+#include <cmath>
 
 Writer::Writer(int imageWidth, int imageHeight)
 {
