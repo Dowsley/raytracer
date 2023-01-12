@@ -1,18 +1,21 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-class Color
+#include "vec3.h"
+
+class Color : public Vec3
 {
     public:
-        float r, g, b; // Honestly, I don't see a reason to make it private.
-
-        Color(float r, float g, float b);
+        Color(double r, double g, double b);
 	    // ~Color();
 
-        float ValidateColorValue(float val);
-        void SetRed(float val);
-        void SetGreen(float val);
-        void SetBlue(float val);
+        double ValidateColorValue(double val);
+        void SetRed(double val);
+        void SetGreen(double val);
+        void SetBlue(double val);
+        double r() const;
+        double g() const;
+        double b() const;
 };
 
 #endif

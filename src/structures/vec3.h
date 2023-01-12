@@ -37,7 +37,7 @@ class Vec3
         Vec3 Cross(const Vec3 &v);
         Vec3 UnitVector();
 
-    private:
+    protected:
         double e[3];
 };
 

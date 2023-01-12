@@ -2,14 +2,14 @@
 
 #include <stdexcept>
 
-Color::Color(float r, float g, float b)
+Color::Color(double r, double g, double b)
 {
     SetRed(r);
     SetGreen(g);
     SetBlue(b);
 }
 
-float Color::ValidateColorValue(float val)
+double Color::ValidateColorValue(double val)
 {
     if (!(val >= 0.0f && val <= 1.0f)) {
         throw std::invalid_argument("Color value must be between 0.0f and 1.0f range.");
@@ -17,15 +17,19 @@ float Color::ValidateColorValue(float val)
     return val;
 }
 
-void Color::SetRed(float val)
+void Color::SetRed(double val)
 {
-    this->r = ValidateColorValue(val);
+    this->e[0] = ValidateColorValue(val);
 }
-void Color::SetGreen(float val)
+void Color::SetGreen(double val)
 {
-    this->g = ValidateColorValue(val);
+    this->e[1] = ValidateColorValue(val);
 }
-void Color::SetBlue(float val)
+void Color::SetBlue(double val)
 {
-    this->b = ValidateColorValue(val);
+    this->e[2] = ValidateColorValue(val);
 }
+
+double Color::r() const { return this->e[0]; }
+double Color::g() const { return this->e[1]; }
+double Color::b() const { return this->e[2]; }

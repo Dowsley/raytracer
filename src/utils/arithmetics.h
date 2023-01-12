@@ -4,7 +4,7 @@
 class Arithmetics
 {
     public:
-        static float scale(float num,float in_min, float in_max,float out_min,float out_max);
+        static double scale(double num,double in_min, double in_max,double out_min,double out_max);
 };
 
 #endif
