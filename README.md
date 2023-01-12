@@ -7,4 +7,5 @@ I intend to make this project have its own personality with some 90s/dreamcore/f
 - [X] Implement core classes
 - [X] Add PPM image output
 - [X] Add progress indicator
-- [ ] Cast the first rays 
+- [ ] Add core structures for vector operations
+- [ ] Cast the first rays
