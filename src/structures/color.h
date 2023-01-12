@@ -9,10 +9,10 @@ class Color
         Color(float r, float g, float b);
 	    // ~Color();
 
-        float validateColorValue(float val);
-        void setRed(float val);
-        void setGreen(float val);
-        void setBlue(float val);
+        float ValidateColorValue(float val);
+        void SetRed(float val);
+        void SetGreen(float val);
+        void SetBlue(float val);
 };
 
 #endif
