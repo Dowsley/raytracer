@@ -2,10 +2,9 @@
 
 #include <iostream>
 
-#include "utils/arithmetics.cpp"
-
-#include "structures/color.cpp"
-#include "core/writer.cpp"
+#include "utils/index.h"
+#include "structures/index.h"
+#include "core/index.h"
 
 class RayTracer
 {
@@ -46,7 +45,7 @@ public:
 
         int progress_scaled = Arithmetics::scale(perc, 0.0f, 1.0f, 0.0f, PROGRESS_NUM_BARS);
 
-        std::cout << "["; 
+        std::cout << "[";
         for (int i = 0; i < PROGRESS_NUM_BARS; i++) {
             if (progress_scaled >= i) {
                 std::cout << "=";
@@ -54,7 +53,7 @@ public:
                 std::cout << " ";
             }
         }
-        std::cout << "]" << " (" << perc * 100 << "%)\n"; 
+        std::cout << "]" << " (" << perc * 100 << "%)\n";
     }
 
 private:
