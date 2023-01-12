@@ -23,6 +23,14 @@ class Vec3
         Vec3& operator*=(const double t);
         Vec3& operator/=(const double t);
 
+        friend Vec3 operator+(const Vec3 &u, const Vec3 &v);
+        friend Vec3 operator*(const Vec3 &u, const Vec3 &v);
+        friend Vec3 operator*(const Vec3 &u, const Vec3 &v);
+        friend Vec3 operator*(double t, const Vec3 &v);
+        friend Vec3 operator*(const Vec3 &v, double t);
+        friend Vec3 operator/(Vec3 v, double t);
+        friend std::ostream& operator<<(std::ostream &out, const Vec3 &v);
+
         double Length() const;
         double LengthSquared() const;
         double Dot(const Vec3 &v);
