@@ -88,4 +88,4 @@ inline Vec3 operator*(const Vec3 &u, const Vec3 &v) { return Vec3(u[0] * v[0], u
 inline Vec3 operator*(double t, const Vec3 &v) { return Vec3(t*v[0], t*v[1], t*v[2]); }
 inline Vec3 operator*(const Vec3 &v, double t) { return t * v; }
 inline Vec3 operator/(Vec3 v, double t) { return (1/t) * v; }
-inline std::ostream& operator<<(std::ostream &out, const Vec3 &v);
+inline std::ostream& operator<<(std::ostream &out, const Vec3 &v) { return out << v[0] << ' ' << v[1] << ' ' << v[2]; }
