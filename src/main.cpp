@@ -9,6 +9,7 @@
 class RayTracer
 {
 private:
+    World world;
     Writer *writer;
 
     /* Image */
@@ -29,12 +30,12 @@ private:
     const Vec3 originPoint = Vec3(0, 0, 0);
     const Vec3 lowerLeftCornerPoint = originPoint - horizontalDir/2 - verticalDir/2 - Vec3(0, 0, focalLength);
 
-    /* Objects (centers) */
-    const Vec3 sphere1 = Vec3(0, 0, -1);
-
 public:
 	RayTracer() {
         writer = new Writer(imageWidth, imageHeight);
+        world.Add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5));
+        world.Add(make_shared<Sphere>(Vec3(0, 100.5, -1), 100));
+        world.Add(make_shared<Sphere>(Vec3(-70, -60.5, -70), 20));
     }
 
     ~RayTracer() {
@@ -60,32 +61,16 @@ public:
         }
     }
 
-    // 0 roots: No hit
-    // 1 root: Tangent (one) hit
-    // 2 roots: Secant, two hits
-    double HitSphere(const Vec3 &center, double radius, const Ray &r) const
-    {
-        Vec3 oc = r.GetOrigin() - center;
-        double a = r.GetDirection().LengthSquared(); // Equivalent of vector.dot(vector);
-        double b = 2.0 * oc.Dot(r.GetDirection());
-        double c = oc.LengthSquared() - radius * radius;
-        double discriminant = b*b - 4*a*c;
-        if (discriminant < 0.0) {
-            return -1.0;
-        } else {
-            return (-b - sqrt(discriminant) ) / (2.0*a);
-        }
-    }
-
     Color GetRayColor(const Ray &r) const
     {
-        double t = HitSphere(sphere1, 0.5, r);
-        if (t > 0.0) {
-            Vec3 normal = (r.At(t) - sphere1).UnitVector();
-            return Color(0.5 * (1 + Vec3(normal.x(), normal.y(), normal.z())));
+
+        HitRecord rec;
+        if (world.CheckHit(r, 0, Geometry::infinity, rec)) {
+            return 0.5 * (rec.normal + Color(1, 1, 1));
         }
+
         Vec3 unitDirection = r.GetDirection().UnitVector();
-        t = 0.5 * (unitDirection.y() + 1.0);
+        auto t = 0.5 * (unitDirection.y() + 1.0);
         return Color((1.0 - t) * Color(0.9, 0.3, 0.5) + t * Color(0.5, 0.7, 1.0)); // lerp
     }
 
