@@ -10,6 +10,7 @@ class RayTracer
 {
 private:
     World world;
+    Camera cam;
     Writer *writer;
 
     /* Image */
@@ -21,6 +22,7 @@ private:
     const double viewportHeight = 2.0;
     const double viewportWidth = aspectRatio * viewportHeight;
     const double focalLength = 1.0;
+    const int samplesPerPixel = 100;
 
     /* Directions */
     const Vec3 horizontalDir = Vec3(viewportWidth, 0, 0);
@@ -48,14 +50,16 @@ public:
         {
             for (int i = 0; i < imageWidth; i++)
             {
-                // This gets a percentage so we can traverse the viewport.
-                auto u = double(i) / (imageWidth);
-                auto v = double(j) / (imageHeight);
+                Color pixelColor(0, 0, 0);
+                for (int s = 0; s < samplesPerPixel; ++s) {
+                    // This gets a percentage so we can traverse the viewport.
+                    auto u = (i + Random::RandomDouble()) / (imageWidth-1);
+                    auto v = (j + Random::RandomDouble()) / (imageHeight-1);
 
-                Ray r = Ray(originPoint, lowerLeftCornerPoint + u*horizontalDir + v*verticalDir - originPoint);
-                Color c = GetRayColor(r);
-
-                writer->WriteRow(c);
+                    Ray r = cam.GetRay(u, v);
+                    pixelColor += GetRayColor(r);
+                }
+                writer->WriteRow(pixelColor, samplesPerPixel);
             }
             LogProgress((double) (j+1) / imageHeight);
         }
@@ -63,7 +67,6 @@ public:
 
     Color GetRayColor(const Ray &r) const
     {
-
         HitRecord rec;
         if (world.CheckHit(r, 0, Geometry::infinity, rec)) {
             return 0.5 * (rec.normal + Color(1, 1, 1));
@@ -80,7 +83,7 @@ public:
             throw std::invalid_argument("Progress percentage value must be between 0.0f and 1.0f range.");
         }
 
-        int progress_scaled = Arithmetics::scale(perc, 0.0, 1.0, 0.0, PROGRESS_NUM_BARS);
+        int progress_scaled = Arithmetics::Scale(perc, 0.0, 1.0, 0.0, PROGRESS_NUM_BARS);
 
         std::cout << "[";
         for (int i = 0; i < PROGRESS_NUM_BARS; i++) {

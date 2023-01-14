@@ -14,11 +14,20 @@ Writer::~Writer()
     outputFile.close();
 }
 
-void Writer::WriteRow(Color const &c)
+void Writer::WriteRow(Color const &c, int samplesPerPixel)
 {
-    int ir = std::round(Arithmetics::scale(c.r(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
-    int ig = std::round(Arithmetics::scale(c.g(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
-    int ib = std::round(Arithmetics::scale(c.b(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    double r = c.r();
+    double g = c.g();
+    double b = c.b();
+
+    double scale = 1.0 / samplesPerPixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
+    int ir = std::round(Arithmetics::Scale(Arithmetics::Clamp(r, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    int ig = std::round(Arithmetics::Scale(Arithmetics::Clamp(g, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    int ib = std::round(Arithmetics::Scale(Arithmetics::Clamp(b, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
 
     outputFile << ir << ' ' << ig << ' ' << ib << '\n';
 }

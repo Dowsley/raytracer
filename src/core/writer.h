@@ -10,7 +10,7 @@ class Writer
     public:
         Writer(int imageWidth, int imageHeight);
 	    ~Writer();
-        void WriteRow(Color const &c);
+        void WriteRow(Color const &c, int samplesPerPixel);
 
     private:
         std::ofstream outputFile;
