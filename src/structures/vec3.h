@@ -14,6 +14,10 @@ class Vec3
         double y();
         double z();
 
+        static Vec3 Random();
+        static Vec3 Random(double min, double max);
+        static Vec3 RandomUnitVector();
+
         Vec3 operator-() const;
         double operator[](int i) const;
         double& operator[](int i);

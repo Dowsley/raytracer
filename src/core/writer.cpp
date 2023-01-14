@@ -20,10 +20,11 @@ void Writer::WriteRow(Color const &c, int samplesPerPixel)
     double g = c.g();
     double b = c.b();
 
+    // Divide the color by the number of samples and gamma-correct for gamma=2.0.
     double scale = 1.0 / samplesPerPixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r  = sqrt(scale * r);
+    g = sqrt(scale * g);
+    b = sqrt(scale * b);
 
     int ir = std::round(Arithmetics::Scale(Arithmetics::Clamp(r, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
     int ig = std::round(Arithmetics::Scale(Arithmetics::Clamp(g, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));

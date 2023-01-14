@@ -1,4 +1,6 @@
 #include "vec3.h"
+#include "../utils/random.h"
+#include "../utils/geometry.h"
 
 #include <cmath>
 
@@ -19,6 +21,22 @@ Vec3::Vec3(double x, double y, double z)
 double Vec3::x() { return e[0]; }
 double Vec3::y() { return e[1]; }
 double Vec3::z() { return e[2]; }
+
+
+Vec3 Vec3::Random()
+{
+    return Vec3(Random::RandomDouble(), Random::RandomDouble(), Random::RandomDouble());
+}
+
+Vec3 Vec3::Random(double min, double max)
+{
+    return Vec3(Random::RandomDouble(min,max), Random::RandomDouble(min,max), Random::RandomDouble(min,max));
+}
+
+Vec3 Vec3::RandomUnitVector()
+{
+    return Geometry::RandomPointInUnitSphere().UnitVector();
+}
 
 Vec3 Vec3::operator-() const { return Vec3(-e[0], -e[1], -e[2]); }
 double Vec3::operator[](int i) const { return e[i]; }

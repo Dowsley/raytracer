@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include "../structures/vec3.h"
+
 class Geometry
 {
     public:
@@ -8,6 +10,7 @@ class Geometry
         constexpr static const double pi = 3.1415926535897932385;
 
         static double DegreesToRadians(double degrees);
+        static Vec3 RandomPointInUnitSphere();
 };
 
 #endif

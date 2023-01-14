@@ -32,6 +32,9 @@ private:
     const Vec3 originPoint = Vec3(0, 0, 0);
     const Vec3 lowerLeftCornerPoint = originPoint - horizontalDir/2 - verticalDir/2 - Vec3(0, 0, focalLength);
 
+    /* Others */
+    const int maxRayRecursionDepth = 1000;
+
 public:
 	RayTracer() {
         writer = new Writer(imageWidth, imageHeight);
@@ -57,7 +60,7 @@ public:
                     auto v = (j + Random::RandomDouble()) / (imageHeight-1);
 
                     Ray r = cam.GetRay(u, v);
-                    pixelColor += GetRayColor(r);
+                    pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
                 writer->WriteRow(pixelColor, samplesPerPixel);
             }
@@ -65,11 +68,18 @@ public:
         }
     }
 
-    Color GetRayColor(const Ray &r) const
+    Color GetRayColor(const Ray &r, int depth) const
     {
+        if (depth <= 0)
+            return Color(0, 0, 0);
+
         HitRecord rec;
-        if (world.CheckHit(r, 0, Geometry::infinity, rec)) {
-            return 0.5 * (rec.normal + Color(1, 1, 1));
+        // 0.001 instead of 0 so we can offset for float approximation.
+        // Solves the shadow acne problem (yup)
+        if (world.CheckHit(r, 0.001, Geometry::infinity, rec)) {
+            Vec3 target = rec.point + rec.normal + Vec3::RandomUnitVector();
+            // In this recursion, lies the magic of multiple rays with random directions.
+            return 0.5 * GetRayColor(Ray(rec.point, target - rec.point), depth-1); 
         }
 
         Vec3 unitDirection = r.GetDirection().UnitVector();
