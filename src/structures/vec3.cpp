@@ -83,9 +83,11 @@ Vec3 Vec3::UnitVector()
 }
 
 Vec3 operator+(const Vec3 &u, const Vec3 &v) { return Vec3(u[0] + v[0], u[1] + v[1], u[2] + v[2]); }
+Vec3 operator+(const Vec3 &u, double val) { return Vec3(u[0] + val, u[1] + val, u[2] + val); } 
+Vec3 operator+(double val, const Vec3 &u) { return u + val; } 
 Vec3 operator-(const Vec3 &u, const Vec3 &v) { return Vec3(u[0] - v[0], u[1] - v[1], u[2] - v[2]); }
 Vec3 operator*(const Vec3 &u, const Vec3 &v) { return Vec3(u[0] * v[0], u[1] * v[1], u[2] * v[2]); }
 Vec3 operator*(double t, const Vec3 &v) { return Vec3(t*v[0], t*v[1], t*v[2]); }
 Vec3 operator*(const Vec3 &v, double t) { return t * v; }
 Vec3 operator/(Vec3 v, double t) { return (1/t) * v; }
-std::ostream& operator<<(std::ostream &out, const Vec3 &v) { return out << v[0] << ' ' << v[1] << ' ' << v[2]; }
+std::ostream& operator<<(std::ostream &out, const Vec3 &v) { return out << "Vec3(" << v[0] << ' ' << v[1] << ' ' << v[2] << ")"; }

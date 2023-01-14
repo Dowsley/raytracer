@@ -1,6 +1,6 @@
 #include "arithmetics.h"
 
-double Arithmetics::scale(double num,double in_min, double in_max,double out_min,double out_max)
+double Arithmetics::scale(double num, double inMin, double inMax, double outMin, double outMax)
 {
-    return (double) (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    return (double) (num - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }

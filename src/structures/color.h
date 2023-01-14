@@ -7,7 +7,6 @@ class Color : public Vec3
 {
     public:
         Color(double r, double g, double b);
-        Color(Vec3 &v);
         Color(Vec3 v);
 	    // ~Color();
 

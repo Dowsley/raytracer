@@ -9,13 +9,6 @@ Color::Color(double r, double g, double b)
     SetBlue(b);
 }
 
-Color::Color(Vec3 &v)
-{
-    SetRed(v[0]);
-    SetGreen(v[1]);
-    SetBlue(v[2]);
-}
-
 Color::Color(Vec3 v)
 {
     SetRed(v[0]);
