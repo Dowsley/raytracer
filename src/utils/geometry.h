@@ -11,6 +11,7 @@ class Geometry
 
         static double DegreesToRadians(double degrees);
         static Vec3 RandomPointInUnitSphere();
+        static Vec3 GetRandomDirInHemisphere(const Vec3 &normal);
 };
 
 #endif

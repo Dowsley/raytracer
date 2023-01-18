@@ -114,7 +114,7 @@ protected:
         }
     }
 
-    Color GetRayColor(const Ray &r, int depth) const
+    Color GetRayColor(const Ray &r, int depth, bool lambertian=true) const
     {
         if (depth <= 0)
             return Color(0, 0, 0);
@@ -123,9 +123,14 @@ protected:
         // 0.001 instead of 0 so we can offset for float approximation.
         // Solves the shadow acne problem (yup)
         if (world.CheckHit(r, 0.001, Geometry::infinity, rec)) {
-            Vec3 target = rec.point + rec.normal + Vec3::RandomUnitVector();
+            Vec3 target = rec.point;
+            if (lambertian) {
+                target += rec.normal + Vec3::RandomUnitVector();
+            } else {
+                target += Geometry::GetRandomDirInHemisphere(rec.normal);
+            }
             // In this recursion, lies the magic of multiple rays with random directions.
-            return 0.5 * GetRayColor(Ray(rec.point, target - rec.point), depth-1); 
+            return 0.5 * GetRayColor(Ray(rec.point, target - rec.point), depth-1, lambertian); 
         }
 
         Vec3 unitDirection = r.GetDirection().UnitVector();

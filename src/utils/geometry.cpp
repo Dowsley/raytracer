@@ -20,3 +20,12 @@ Vec3 Geometry::RandomPointInUnitSphere()
         return p;
     }
 }
+
+Vec3 Geometry::GetRandomDirInHemisphere(const Vec3 &normal)
+{
+    Vec3 inUnitSphere = RandomPointInUnitSphere();
+    if (inUnitSphere.Dot(normal) > 0.0) // In the same hemisphere as the normal
+        return inUnitSphere;
+    else
+        return -inUnitSphere;
+}
