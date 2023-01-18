@@ -6,7 +6,7 @@
 class Metal : public Material
 {
     public:
-        Metal(const Color &a);
+        Metal(const Color &a, double f);
 
         Vec3 Reflect(const Vec3 &v, const Vec3 &n) const;
         virtual bool Scatter(
@@ -15,6 +15,7 @@ class Metal : public Material
 
     public:
         Color albedo;
+        double fuzzinessPerc;
 };
 
 #endif

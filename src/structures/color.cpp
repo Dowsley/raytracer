@@ -25,7 +25,7 @@ Color::Color(Vec3 v)
 
 double Color::ValidateColorValue(double val)
 {
-    if (!(val >= 0.0f && val <= 1.0f)) {
+    if (!(val >= 0.0 && val <= 1.0)) {
         throw std::invalid_argument("Color value must be between 0.0f and 1.0f range.");
     }
     return val;

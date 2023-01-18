@@ -1,6 +1,8 @@
 #include "metal.h"
 
-Metal::Metal(const Color &a) : albedo(a) {}
+#include <stdexcept>
+
+Metal::Metal(const Color &a, double f): albedo(a), fuzzinessPerc(f < 1 ? f : 1) {}
 
 
 Vec3 Metal::Reflect(const Vec3 &v, const Vec3 &n) const
@@ -14,7 +16,7 @@ bool Metal::Scatter(
     const Ray &rayIn, const HitRecord &rec, Color &attenuation, Ray &scattered) const
 {
     Vec3 scatterDirection = Reflect(rayIn.GetDirection().UnitVector(), rec.normal);
-    scattered = Ray(rec.point, scatterDirection);
+    scattered = Ray(rec.point, scatterDirection + fuzzinessPerc*Geometry::RandomPointInUnitSphere());
     attenuation = albedo;
 
     return true;
