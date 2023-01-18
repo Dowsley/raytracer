@@ -1,22 +1,39 @@
+#define OLC_PGE_APPLICATION
+
+#define MAX_DEPTH 50
 #define PROGRESS_NUM_BARS 30
 
+// #include <string>
 #include <iostream>
 
+#include "graphics/olcPixelGameEngine.h"
 #include "utils/index.h"
 #include "structures/index.h"
 #include "core/index.h"
 
-class RayTracer
+class RayTracer : public olc::PixelGameEngine
 {
+public:
+    /* Image */
+    constexpr static const double aspectRatio = 16.0 / 9.0;
+    constexpr static const int imageWidth = 400;
+    constexpr static const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
+
+	RayTracer() {
+		sAppName = "RayTracer";
+        world.Add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5));
+        world.Add(make_shared<Sphere>(Vec3(0, 100.5, -1), 100));
+        world.Add(make_shared<Sphere>(Vec3(-70, -60.5, -70), 20));
+	}
+
+	~RayTracer() {
+        delete writer;
+	}
+
 private:
     World world;
     Camera cam;
-    Writer *writer;
-
-    /* Image */
-    const double aspectRatio = 16.0 / 9.0;
-    const int imageWidth = 400;
-    const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
+    Writer *writer = new Writer(imageWidth, imageHeight);
 
     /* Camera */
     const double viewportHeight = 2.0;
@@ -33,21 +50,46 @@ private:
     const Vec3 lowerLeftCornerPoint = originPoint - horizontalDir/2 - verticalDir/2 - Vec3(0, 0, focalLength);
 
     /* Others */
-    const int maxRayRecursionDepth = 1000;
+    const int maxRayRecursionDepth = 200;
 
-public:
-	RayTracer() {
-        writer = new Writer(imageWidth, imageHeight);
-        world.Add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5));
-        world.Add(make_shared<Sphere>(Vec3(0, 100.5, -1), 100));
-        world.Add(make_shared<Sphere>(Vec3(-70, -60.5, -70), 20));
+protected:
+	bool OnUserCreate() override
+	{
+        Render();
+		return true;
+	}
+
+	bool OnUserUpdate(float fElapsedTime) override
+	{
+		if (GetKey(olc::Key::R).bReleased) {
+            Render(true);
+		}
+        return true;
+	}
+
+    void DrawColor(const olc::vi2d pos, Color &c, int samplesPerPixel)
+    {
+        double r = c.r();
+        double g = c.g();
+        double b = c.b();
+
+        // Divide the color by the number of samples and gamma-correct for gamma=2.0.
+        double scale = 1.0 / samplesPerPixel;
+        r = sqrt(scale * r);
+        g = sqrt(scale * g);
+        b = sqrt(scale * b);
+
+        int ir = std::round(Arithmetics::Scale(Arithmetics::Clamp(r, 0.0, 1.0), 0.0, 1.0, 0, 255));
+        int ig = std::round(Arithmetics::Scale(Arithmetics::Clamp(g, 0.0, 1.0), 0.0, 1.0, 0, 255));
+        int ib = std::round(Arithmetics::Scale(Arithmetics::Clamp(b, 0.0, 1.0), 0.0, 1.0, 0, 255));
+
+        Draw(
+            pos,
+            olc::Pixel(ir, ig, ib)
+        );
     }
 
-    ~RayTracer() {
-        delete writer;
-    }
-
-    void Render() const
+    void Render(bool output_to_image=false)
     {
         for (int j = 0; j < imageHeight; j++)
         {
@@ -62,7 +104,11 @@ public:
                     Ray r = cam.GetRay(u, v);
                     pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
-                writer->WriteRow(pixelColor, samplesPerPixel);
+                if (!output_to_image) {
+                    DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
+                } else {
+                    writer->WriteRow(pixelColor, samplesPerPixel);
+                }
             }
             LogProgress((double) (j+1) / imageHeight);
         }
@@ -110,9 +156,10 @@ public:
 
 int main(int argc, char const *argv[])
 {
-	RayTracer rayTracer = RayTracer();
+	RayTracer engine;
 
-	rayTracer.Render();
+	engine.Construct(RayTracer::imageWidth, RayTracer::imageHeight, 4, 4);
+	engine.Start();
 
-    return 0;
+	return 0;
 }
