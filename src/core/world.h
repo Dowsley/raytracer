@@ -1,7 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include "../structures/Hittable.h"
+#include "../structures/abstract/hittable.h"
 
 #include <memory>
 #include <vector>
