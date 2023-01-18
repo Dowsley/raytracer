@@ -31,14 +31,10 @@ public:
         world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialRight));
 	}
 
-	~RayTracer() {
-        delete writer;
-	}
-
 private:
     World world;
     Camera cam;
-    Writer *writer = new Writer(imageWidth, imageHeight);
+    Writer writer;
 
     /* Camera */
     const double viewportHeight = 2.0;
@@ -96,6 +92,9 @@ protected:
 
     void Render(bool output_to_image=false)
     {
+        if (output_to_image)
+            writer.Open(imageWidth, imageHeight);
+            
         for (int j = 0; j < imageHeight; j++)
         {
             for (int i = 0; i < imageWidth; i++)
@@ -112,11 +111,13 @@ protected:
                 if (!output_to_image) {
                     DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
                 } else {
-                    writer->WriteRow(pixelColor, samplesPerPixel);
+                    writer.WriteRow(pixelColor, samplesPerPixel);
                 }
             }
             LogProgress((double) (j+1) / imageHeight);
         }
+        if (output_to_image)
+            writer.Close();
     }
 
     Color GetRayColor(const Ray &r, int depth) const

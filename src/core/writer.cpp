@@ -3,13 +3,13 @@
 
 #include <cmath>
 
-Writer::Writer(int imageWidth, int imageHeight)
+void Writer::Open(int imageWidth, int imageHeight)
 {
     outputFile.open(OUTPUT_IMG_NAME);
     outputFile << "P3\n" << imageWidth << ' ' << imageHeight << "\n" << MAX_COLOR_VALUE << "\n";
 }
 
-Writer::~Writer()
+void Writer::Close()
 {
     outputFile.close();
 }

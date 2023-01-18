@@ -8,9 +8,9 @@
 class Writer
 {
     public:
-        Writer(int imageWidth, int imageHeight);
-	    ~Writer();
         void WriteRow(Color const &c, int samplesPerPixel);
+        void Open(int imageWidth, int imageHeight);
+        void Close();
 
     private:
         std::ofstream outputFile;
