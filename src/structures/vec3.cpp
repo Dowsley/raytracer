@@ -81,23 +81,29 @@ double Vec3::LengthSquared() const
     return (e[0]*e[0]) + (e[1]*e[1]) + (e[2]*e[2]);
 }
 
-double Vec3::Dot(const Vec3 &v)
+double Vec3::Dot(const Vec3 &v) const
 {
     return e[0] * v[0]
         + e[1] * v[1]
         + e[2] * v[2];
 }
 
-Vec3 Vec3::Cross(const Vec3 &v)
+Vec3 Vec3::Cross(const Vec3 &v) const
 {
     return Vec3(e[1] * v[2] - e[2] * v[1],
                 e[2] * v[0] - e[0] * v[2],
                 e[0] * v[1] - e[1] * v[0]);
 }
 
-Vec3 Vec3::UnitVector()
+Vec3 Vec3::UnitVector() const
 {
     return *this / this->Length();
+}
+
+bool Vec3::IsNearZero() const
+{
+    const auto s = 1e-8;
+    return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
 }
 
 Vec3 operator+(const Vec3 &u, const Vec3 &v) { return Vec3(u[0] + v[0], u[1] + v[1], u[2] + v[2]); }

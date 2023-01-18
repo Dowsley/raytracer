@@ -21,9 +21,14 @@ public:
 
 	RayTracer() {
 		sAppName = "RayTracer";
-        world.Add(make_shared<Sphere>(Vec3(0, 0, -1), 0.5));
-        world.Add(make_shared<Sphere>(Vec3(0, 100.5, -1), 100));
-        world.Add(make_shared<Sphere>(Vec3(-70, -60.5, -70), 20));
+        auto materialGround = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
+        auto materialCenter = make_shared<Lambertian>(Color(0.7, 0.3, 0.3));
+        auto materialLeft   = make_shared<Metal>(Color(0.8, 0.8, 0.8));
+        auto materialRight  = make_shared<Metal>(Color(0.8, 0.6, 0.2));
+        world.Add(make_shared<Sphere>(Vec3( 0.0, 100.5, -1.0), 100.0, materialGround));
+        world.Add(make_shared<Sphere>(Vec3( 0.0,    0.0, -1.0),   0.5, materialCenter));
+        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, materialLeft));
+        world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialRight));
 	}
 
 	~RayTracer() {
@@ -114,7 +119,7 @@ protected:
         }
     }
 
-    Color GetRayColor(const Ray &r, int depth, bool lambertian=true) const
+    Color GetRayColor(const Ray &r, int depth) const
     {
         if (depth <= 0)
             return Color(0, 0, 0);
@@ -123,14 +128,12 @@ protected:
         // 0.001 instead of 0 so we can offset for float approximation.
         // Solves the shadow acne problem (yup)
         if (world.CheckHit(r, 0.001, Geometry::infinity, rec)) {
-            Vec3 target = rec.point;
-            if (lambertian) {
-                target += rec.normal + Vec3::RandomUnitVector();
-            } else {
-                target += Geometry::GetRandomDirInHemisphere(rec.normal);
+            Ray scattered;
+            Color attenuation;
+            if (rec.material->Scatter(r, rec, attenuation, scattered)) {
+                return attenuation * GetRayColor(scattered, depth-1);
             }
-            // In this recursion, lies the magic of multiple rays with random directions.
-            return 0.5 * GetRayColor(Ray(rec.point, target - rec.point), depth-1, lambertian); 
+            return Color(0,0,0);
         }
 
         Vec3 unitDirection = r.GetDirection().UnitVector();

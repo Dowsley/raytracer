@@ -2,6 +2,10 @@
 
 #include <cmath>
 
+Sphere::Sphere(){};
+Sphere::Sphere(Vec3 center, double r, shared_ptr<Material> m)
+    : center(center), radius(r), material(m) {};
+
 // 0 roots: No hit
 // 1 root: Tangent (one) hit
 // 2 roots: Secant, two hits
@@ -30,6 +34,7 @@ bool Sphere::CheckHit(const Ray &r, double tMin, double tMax, HitRecord &rec) co
     rec.point = r.At(rec.t);
     Vec3 outwardNormal = (rec.point - center) / radius;
     rec.setFaceNormal(r, outwardNormal);
+    rec.material = material;
 
     return true;
 }

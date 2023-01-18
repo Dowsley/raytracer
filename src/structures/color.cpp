@@ -2,6 +2,13 @@
 
 #include <stdexcept>
 
+Color::Color()
+{
+    SetRed(0);
+    SetGreen(0);
+    SetBlue(0);
+}
+
 Color::Color(double r, double g, double b)
 {
     SetRed(r);

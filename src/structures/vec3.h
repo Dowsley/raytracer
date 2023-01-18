@@ -39,9 +39,10 @@ class Vec3
 
         double Length() const;
         double LengthSquared() const;
-        double Dot(const Vec3 &v);
-        Vec3 Cross(const Vec3 &v);
-        Vec3 UnitVector();
+        double Dot(const Vec3 &v) const;
+        Vec3 Cross(const Vec3 &v) const;
+        Vec3 UnitVector() const;
+        bool IsNearZero() const; // Return true if the vector is close to zero in all dimensions.
 
     protected:
         double e[3];
