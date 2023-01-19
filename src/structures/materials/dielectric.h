@@ -10,8 +10,9 @@ class Dielectric : public Material
 {
     public:
         double refractionIndex;
+        Color albedo;
 
-        Dielectric(double ri);
+        Dielectric(const Color &a, double ri);
 
         virtual bool Scatter(
             const Ray &rayIn, const HitRecord &rec, Color &attenuation, Ray &scattered

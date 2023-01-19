@@ -4,12 +4,12 @@
 
 #include "../../utils/random.h"
 
-Dielectric::Dielectric(double ri)
-    : refractionIndex(ri) {} 
+Dielectric::Dielectric(const Color &a, double ri)
+    : refractionIndex(ri), albedo(a) {} 
 
 bool Dielectric::Scatter(const Ray &rayIn, const HitRecord &rec, Color &attenuation, Ray &scattered) const
 {
-    attenuation = Color(1.0, 1.0, 1.0);
+    attenuation = albedo;
     double refractionRatio = rec.frontFace ? (1.0 / refractionIndex) : refractionIndex;
 
     Vec3 unitDir = rayIn.GetDirection().UnitVector();

@@ -3,8 +3,8 @@
 #define MAX_DEPTH 50
 #define PROGRESS_NUM_BARS 30
 
-// #include <string>
 #include <iostream>
+#include <cmath>
 
 #include "graphics/olcPixelGameEngine.h"
 #include "utils/index.h"
@@ -21,19 +21,22 @@ public:
 
 	RayTracer() {
 		sAppName = "RayTracer";
-        auto materialGround = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-        auto materialCenter = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-        auto materialLeft = make_shared<Dielectric>(1.5);
-        auto materialRight = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
+        auto materialGround = make_shared<Lambertian>(Color(0.33, 0.30, 0.37));
+        auto materialDiffuse = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
+        auto materialGlass   = make_shared<Dielectric>(Color(0.78, 0.63, 0.78), 1.5);
+        auto materialMetal  = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
+
         world.Add(make_shared<Sphere>(Vec3( 0.0, 100.5, -1.0), 100.0, materialGround));
-        world.Add(make_shared<Sphere>(Vec3( 0.0,    0.0, -1.0),   0.5, materialCenter));
-        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   -0.4, materialLeft));
-        world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialRight));
+        world.Add(make_shared<Sphere>(Vec3( 0.0,    0.0, -1.0),   0.5, materialDiffuse));
+        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, materialGlass));
+        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0), -0.45, materialGlass));
+        world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialMetal));
 	}
 
 private:
+    // double R = cos(Geometry::pi/4);
     World world;
-    Camera cam;
+    Camera cam = Camera(Vec3(-2.0,-2.0,1.0), Vec3(0.0,0.0,-1.0), Vec3(0.0,1.0,0.0), 30, aspectRatio);
     Writer writer;
 
     /* Camera */
