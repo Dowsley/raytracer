@@ -13,10 +13,18 @@ And... implement this in the Pixel Game Engine!
 - [X] Cast the first rays
 - [X] Antialiasing
 - [X] Diffuse surfaces
-- [ ] Reflection
+- [X] Reflection
+- [X] Reimplement rendering on the Pixel Game Engine
+  - [X] With the PPM image output as an option
+- [X] Refraction
+- [ ] Positionable camera
+- [ ] Controllable camera
 - [ ] Implement real time rendering
-  - [ ] Use the Pixel Game Engine or OpenGL
-  - [ ] Optimize with GPU, parallelized rendering. 
+  - [ ] Optimize with GPU, parallelized rendering? 
+- [ ] Add support to more complex shapes
+- [ ] Make it usable
+  - Interface?
+  - Modifiable Geometry mid-run
 
 # Known Bugs
-1. Negative Radius sphere of material dielectric gives unexpected reflections on borders.
+1. Negative Radius sphere of material dielectric gives off unexpected reflections on borders.
