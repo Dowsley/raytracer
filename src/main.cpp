@@ -22,12 +22,12 @@ public:
 	RayTracer() {
 		sAppName = "RayTracer";
         auto materialGround = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-        auto materialCenter = make_shared<Lambertian>(Color(0.7, 0.3, 0.3));
-        auto materialLeft   = make_shared<Metal>(Color(0.8, 0.8, 0.8), 0.3);
-        auto materialRight  = make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
+        auto materialCenter = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
+        auto materialLeft = make_shared<Dielectric>(1.5);
+        auto materialRight = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
         world.Add(make_shared<Sphere>(Vec3( 0.0, 100.5, -1.0), 100.0, materialGround));
         world.Add(make_shared<Sphere>(Vec3( 0.0,    0.0, -1.0),   0.5, materialCenter));
-        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, materialLeft));
+        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   -0.4, materialLeft));
         world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialRight));
 	}
 
@@ -90,9 +90,9 @@ protected:
         );
     }
 
-    void Render(bool output_to_image=false)
+    void Render(bool outputToImage=false)
     {
-        if (output_to_image)
+        if (outputToImage)
             writer.Open(imageWidth, imageHeight);
             
         for (int j = 0; j < imageHeight; j++)
@@ -108,7 +108,7 @@ protected:
                     Ray r = cam.GetRay(u, v);
                     pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
-                if (!output_to_image) {
+                if (!outputToImage) {
                     DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
                 } else {
                     writer.WriteRow(pixelColor, samplesPerPixel);
@@ -116,7 +116,7 @@ protected:
             }
             LogProgress((double) (j+1) / imageHeight);
         }
-        if (output_to_image)
+        if (outputToImage)
             writer.Close();
     }
 

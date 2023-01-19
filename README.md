@@ -17,3 +17,6 @@ And... implement this in the Pixel Game Engine!
 - [ ] Implement real time rendering
   - [ ] Use the Pixel Game Engine or OpenGL
   - [ ] Optimize with GPU, parallelized rendering. 
+
+# Known Bugs
+1. Negative Radius sphere of material dielectric gives unexpected reflections on borders.

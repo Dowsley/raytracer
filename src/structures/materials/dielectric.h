@@ -1,16 +1,17 @@
-#ifndef LAMBERTIAN_H
-#define LAMBERTIAN_H
+#ifndef DIELECTRIC_H
+#define DIELECTRIC_H
 
 #include "../abstract/material.h"
 #include "../ray.h"
 #include "../color.h"
 #include "../hit_record.h"
-class Lambertian : public Material
+
+class Dielectric : public Material
 {
     public:
-        Color albedo;
+        double refractionIndex;
 
-        Lambertian(const Color &a);
+        Dielectric(double ri);
 
         virtual bool Scatter(
             const Ray &rayIn, const HitRecord &rec, Color &attenuation, Ray &scattered
