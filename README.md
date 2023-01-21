@@ -17,15 +17,17 @@ And... implement this in the Pixel Game Engine!
 - [X] Reimplement rendering on the Pixel Game Engine
   - [X] With the PPM image output as an option
 - [X] Refraction
-- [ ] Positionable camera
+- [X] Positionable camera
+- [X] Depth of Field (defocus blur)
+- [ ] Parallelized rendering? 
 - [ ] Controllable camera
   - [ ] Implement cheaper, real time rendering
-- [ ] Optimize with GPU, parallelized rendering? 
 - [ ] Add support to more complex shapes
 - [ ] Make it usable
   - Interface?
   - Modifiable Geometry mid-run
   - Decoupled, loadable data for geometry and other parameters (cam, etc)
+  - Physics engine?
 
 ## Known Bugs
 1. Negative Radius sphere of material dielectric gives off unexpected reflections on borders.
