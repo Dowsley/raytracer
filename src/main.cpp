@@ -15,51 +15,42 @@ class RayTracer : public olc::PixelGameEngine
 {
 public:
     /* Image */
-    constexpr static const double aspectRatio = 16.0 / 9.0;
-    constexpr static const int imageWidth = 400;
+    constexpr static const double aspectRatio = 3.0 / 2.0;
+    constexpr static const int imageWidth = 1200;
     constexpr static const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
 	RayTracer() {
 		sAppName = "RayTracer";
-        auto materialGround = make_shared<Lambertian>(Color(0.33, 0.30, 0.37));
-        auto materialDiffuse = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-        auto materialGlass   = make_shared<Dielectric>(Color(0.78, 0.63, 0.78), 1.5);
-        auto materialMetal  = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
-
-        world.Add(make_shared<Sphere>(Vec3( 0.0, 100.5, -1.0), 100.0, materialGround));
-        world.Add(make_shared<Sphere>(Vec3( 0.0,    0.0, -1.0),   0.5, materialDiffuse));
-        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, materialGlass));
-        world.Add(make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0), -0.45, materialGlass));
-        world.Add(make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, materialMetal));
 	}
 
 private:
-    // double R = cos(Geometry::pi/4);
-    World world;
-    Camera cam = Camera(Vec3(-2.0,-2.0,1.0), Vec3(0.0,0.0,-1.0), Vec3(0.0,1.0,0.0), 30, aspectRatio);
+    World world = World::GenerateRandom();
     Writer writer;
 
     /* Camera */
-    const double viewportHeight = 2.0;
-    const double viewportWidth = aspectRatio * viewportHeight;
-    const double focalLength = 1.0;
-    const int samplesPerPixel = 100;
-
-    /* Directions */
-    const Vec3 horizontalDir = Vec3(viewportWidth, 0, 0);
-    const Vec3 verticalDir = Vec3(0, viewportHeight, 0);
-
-    /* Points */
-    const Vec3 originPoint = Vec3(0, 0, 0);
-    const Vec3 lowerLeftCornerPoint = originPoint - horizontalDir/2 - verticalDir/2 - Vec3(0, 0, focalLength);
+    Vec3 lookFrom = Vec3(13, -2, 3);
+    Vec3 lookAt = Vec3(0.0, 0.0, 0.0);
+    Vec3 viewUpDir = Vec3(0.0, 1.0, 0.0);
+    double distToFocus = 10.0;
+    double aperture = 0.1;
+    Camera cam = Camera(
+        lookFrom,
+        lookAt,
+        viewUpDir,
+        30,
+        aspectRatio,
+        aperture,
+        distToFocus
+    );
 
     /* Others */
-    const int maxRayRecursionDepth = 200;
+    const int maxRayRecursionDepth = 50;
+    const int samplesPerPixel = 10;
 
 protected:
 	bool OnUserCreate() override
 	{
-        Render();
+        Render(true);
 		return true;
 	}
 
@@ -111,11 +102,10 @@ protected:
                     Ray r = cam.GetRay(u, v);
                     pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
-                if (!outputToImage) {
-                    DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
-                } else {
+                if (outputToImage) {
                     writer.WriteRow(pixelColor, samplesPerPixel);
                 }
+                DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
             }
             LogProgress((double) (j+1) / imageHeight);
         }

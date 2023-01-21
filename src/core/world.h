@@ -20,6 +20,8 @@ class World
 
         bool CheckHit(const Ray &r, double tMin, double tMax, HitRecord &rec) const;
 
+        static World GenerateRandom();
+
     private:
         std::vector<shared_ptr<Hittable>> objects;
 };

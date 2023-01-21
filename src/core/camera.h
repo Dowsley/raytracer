@@ -12,7 +12,9 @@ class Camera
             Vec3 lookToPoint,
             Vec3 viewUpDir, 
             double verticalFOVDegrees,
-            double aspectRatio
+            double aspectRatio,
+            double aperture,
+            double focusDist
         );
 
         Ray GetRay(double s, double t) const;
@@ -22,6 +24,8 @@ class Camera
         Vec3 lowerLeftCornerPoint;
         Vec3 horizontalDir;
         Vec3 verticalDir;
+        double lensRadius;
+        Vec3 u, v, w;
 };
 
 #endif

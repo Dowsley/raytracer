@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "random.h"
 
 #include <limits>
 
@@ -28,4 +29,15 @@ Vec3 Geometry::GetRandomDirInHemisphere(const Vec3 &normal)
         return inUnitSphere;
     else
         return -inUnitSphere;
+}
+
+Vec3 Geometry::RandomPointInUnitDisk()
+{
+    while (true) {
+        auto p = Vec3(Random::RandomDouble(-1,1), Random::RandomDouble(-1,1), 0);
+        if (p.LengthSquared() >= 1) {
+            continue;
+        }
+        return p;
+    }
 }
