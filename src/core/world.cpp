@@ -5,12 +5,12 @@
 using std::make_shared;
 
 #include "../structures/materials/dielectric.h"
-#include "../structures/materials/Metal.h"
+#include "../structures/materials/metal.h"
 #include "../structures/materials/lambertian.h"
 
 #include "../structures/sphere.h"
 
-#include "../utils/Random.h"
+#include "../utils/random.h"
 
 World::World(shared_ptr<Hittable> object) { Add(object); }
 
@@ -79,5 +79,5 @@ World World::GenerateRandom()
     auto material3 = make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0);
     world.Add(make_shared<Sphere>(Vec3(4, -1, 0), 1.0, material3));
 
-    return world; 
+    return world;
 }
