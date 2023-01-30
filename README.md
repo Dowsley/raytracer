@@ -19,7 +19,7 @@ And... implement this in the Pixel Game Engine!
 - [X] Refraction
 - [X] Positionable camera
 - [X] Depth of Field (defocus blur)
-- [ ] Parallelized rendering? 
+- [X] Parallelized rendering
 - [ ] Controllable camera
   - [ ] Implement cheaper, real time rendering
 - [ ] Add support to more complex shapes
