@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <thread>
 
 #include "graphics/olcPixelGameEngine.h"
 #include "utils/index.h"
@@ -24,6 +25,13 @@ public:
 	}
 
 private:
+    int numOfCores = std::thread::hardware_concurrency();
+    int numOfBatchCols = std::ceil(std::sqrt(numOfCores));
+    int numOfBatchRows = std::ceil(numOfCores / (double)numOfBatchCols);
+    int batchRowSize = imageWidth / numOfBatchRows;
+    int batchColSize = imageHeight / numOfBatchCols;
+
+    Image image = Image(imageWidth, imageHeight);
     World world = World::GenerateRandom();
     Writer writer;
 
@@ -33,11 +41,12 @@ private:
     Vec3 viewUpDir = Vec3(0.0, 1.0, 0.0);
     double distToFocus = 10.0;
     double aperture = 0.1;
+    double fov = 30;
     Camera cam = Camera(
         lookFrom,
         lookAt,
         viewUpDir,
-        30,
+        fov,
         aspectRatio,
         aperture,
         distToFocus
@@ -45,24 +54,24 @@ private:
 
     /* Others */
     const int maxRayRecursionDepth = 50;
-    const int samplesPerPixel = 10;
+    const int samplesPerPixel = 20;
 
 protected:
 	bool OnUserCreate() override
 	{
-        Render(true);
-		return true;
+        RenderScreen();
+        return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 		if (GetKey(olc::Key::R).bReleased) {
-            Render(true);
+            RenderImage();
 		}
         return true;
 	}
 
-    void DrawColor(const olc::vi2d pos, Color &c, int samplesPerPixel)
+    void SaveToBuffer(int i, int j, Color &c, int samplesPerPixel)
     {
         double r = c.r();
         double g = c.g();
@@ -70,13 +79,18 @@ protected:
 
         // Divide the color by the number of samples and gamma-correct for gamma=2.0.
         double scale = 1.0 / samplesPerPixel;
-        r = sqrt(scale * r);
-        g = sqrt(scale * g);
-        b = sqrt(scale * b);
+        r = Arithmetics::Clamp(sqrt(scale * r), 0.0, 1.0);
+        g = Arithmetics::Clamp(sqrt(scale * g), 0.0, 1.0);
+        b = Arithmetics::Clamp(sqrt(scale * b), 0.0, 1.0);
 
-        int ir = std::round(Arithmetics::Scale(Arithmetics::Clamp(r, 0.0, 1.0), 0.0, 1.0, 0, 255));
-        int ig = std::round(Arithmetics::Scale(Arithmetics::Clamp(g, 0.0, 1.0), 0.0, 1.0, 0, 255));
-        int ib = std::round(Arithmetics::Scale(Arithmetics::Clamp(b, 0.0, 1.0), 0.0, 1.0, 0, 255));
+        image.SetPixel(i, j, r, g, b);
+    }
+
+    void DrawColor(const olc::vi2d pos, Color &c)
+    {
+        int ir = std::round(Arithmetics::Scale(c.r(), 0.0, 1.0, 0, 255));
+        int ig = std::round(Arithmetics::Scale(c.g(), 0.0, 1.0, 0, 255));
+        int ib = std::round(Arithmetics::Scale(c.b(), 0.0, 1.0, 0, 255));
 
         Draw(
             pos,
@@ -84,14 +98,12 @@ protected:
         );
     }
 
-    void Render(bool outputToImage=false)
+    void ComputeBatch(int row, int col)
     {
-        if (outputToImage)
-            writer.Open(imageWidth, imageHeight);
-            
-        for (int j = 0; j < imageHeight; j++)
+        printf("Thread:(%d, %d) started\n", row, col);
+        for (int j = col * batchColSize; j < ((col+1)*batchColSize); j++)
         {
-            for (int i = 0; i < imageWidth; i++)
+            for (int i = row * batchRowSize; i < ((row+1)*batchRowSize); i++)
             {
                 Color pixelColor(0, 0, 0);
                 for (int s = 0; s < samplesPerPixel; ++s) {
@@ -102,15 +114,53 @@ protected:
                     Ray r = cam.GetRay(u, v);
                     pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
-                if (outputToImage) {
-                    writer.WriteRow(pixelColor, samplesPerPixel);
-                }
-                DrawColor(olc::vi2d(i, j), pixelColor, samplesPerPixel);
+                SaveToBuffer(i, j, pixelColor, samplesPerPixel);
+            }
+        }
+        printf("Thread:(%d, %d) finished\n", row, col);
+    }
+
+    void RenderScreen()
+    {
+        // STEP 1: Compute colors in separate threads
+        printf("Starting computing with %d threads\n", numOfCores);
+        std::vector<std::thread> threads;
+        for (int j = 0; j < numOfBatchCols; j++)
+        {
+            for (int i = 0; i < numOfBatchRows; i++)
+            {
+                std::thread t = std::thread(&RayTracer::ComputeBatch, this, i, j);
+                threads.push_back(std::move(t));
+            }
+        }
+        for (auto &t : threads)
+        {
+            t.join();
+        }
+
+        // STEP 2: Output result to the screen
+        for (int j = 0; j < imageHeight; j++)
+        {
+            for (int i = 0; i < imageWidth; i++)
+            {
+                DrawColor(olc::vi2d(i, j), image.GetPixel(i, j));
             }
             LogProgress((double) (j+1) / imageHeight);
         }
-        if (outputToImage)
-            writer.Close();
+    }
+
+    void RenderImage()
+    {
+        writer.Open(imageWidth, imageHeight);
+        for (int j = 0; j < imageHeight; j++)
+        {
+            for (int i = 0; i < imageWidth; i++)
+            {
+                writer.WriteRow(image.GetPixel(i,j), samplesPerPixel);
+            }
+            LogProgress((double) (j+1) / imageHeight);
+        }
+        writer.Close();
     }
 
     Color GetRayColor(const Ray &r, int depth) const

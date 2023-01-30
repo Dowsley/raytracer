@@ -16,19 +16,9 @@ void Writer::Close()
 
 void Writer::WriteRow(Color const &c, int samplesPerPixel)
 {
-    double r = c.r();
-    double g = c.g();
-    double b = c.b();
-
-    // Divide the color by the number of samples and gamma-correct for gamma=2.0.
-    double scale = 1.0 / samplesPerPixel;
-    r  = sqrt(scale * r);
-    g = sqrt(scale * g);
-    b = sqrt(scale * b);
-
-    int ir = std::round(Arithmetics::Scale(Arithmetics::Clamp(r, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
-    int ig = std::round(Arithmetics::Scale(Arithmetics::Clamp(g, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
-    int ib = std::round(Arithmetics::Scale(Arithmetics::Clamp(b, 0.0, 1.0), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    int ir = std::round(Arithmetics::Scale(c.r(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    int ig = std::round(Arithmetics::Scale(c.g(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
+    int ib = std::round(Arithmetics::Scale(c.b(), 0.0, 1.0, 0, MAX_COLOR_VALUE));
 
     outputFile << ir << ' ' << ig << ' ' << ib << '\n';
 }
