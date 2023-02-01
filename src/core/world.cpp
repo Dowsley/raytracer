@@ -12,6 +12,7 @@ using std::make_shared;
 
 #include "../utils/random.h"
 
+World::World() {};
 World::World(shared_ptr<Hittable> object) { Add(object); }
 
 void World::Clear() { objects.clear(); }

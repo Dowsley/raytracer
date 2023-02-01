@@ -12,7 +12,7 @@ using std::make_shared;
 class World
 {
     public:
-        World() {}
+        World();
         World(shared_ptr<Hittable> object);
 
         void Clear();

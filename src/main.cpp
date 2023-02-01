@@ -53,8 +53,8 @@ private:
     );
 
     /* Others */
-    const int maxRayRecursionDepth = 50;
-    const int samplesPerPixel = 20;
+    const int maxRayRecursionDepth = 900;
+    const int samplesPerPixel = 50;
 
 protected:
 	bool OnUserCreate() override
@@ -170,7 +170,7 @@ protected:
 
         HitRecord rec;
         // 0.001 instead of 0 so we can offset for float approximation.
-        // Solves the shadow acne problem (yup)
+        // Solves the shadow acne problem (yup, thats the fuckin name)
         if (world.CheckHit(r, 0.001, Geometry::infinity, rec)) {
             Ray scattered;
             Color attenuation;
