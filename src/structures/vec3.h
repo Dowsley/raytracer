@@ -10,9 +10,9 @@ class Vec3
         Vec3(double x, double y, double z);
 
         // No, I'm not gonna respect standard names here.
-        double x();
-        double y();
-        double z();
+        double x() const;
+        double y() const;
+        double z() const;
 
         static Vec3 Random();
         static Vec3 Random(double min, double max);

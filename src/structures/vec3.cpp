@@ -18,9 +18,9 @@ Vec3::Vec3(double x, double y, double z)
     e[2] = z;
 }
 
-double Vec3::x() { return e[0]; }
-double Vec3::y() { return e[1]; }
-double Vec3::z() { return e[2]; }
+double Vec3::x() const { return e[0]; }
+double Vec3::y() const { return e[1]; }
+double Vec3::z() const { return e[2]; }
 
 
 Vec3 Vec3::Random()
