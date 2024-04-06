@@ -1,6 +1,5 @@
 #define OLC_PGE_APPLICATION
 
-#define MAX_DEPTH 50
 #define PROGRESS_NUM_BARS 30
 
 #include <iostream>
@@ -17,7 +16,7 @@ class RayTracer : public olc::PixelGameEngine
 public:
     /* Image */
     constexpr static const double aspectRatio = 3.0 / 2.0;
-    constexpr static const int imageWidth = 1200;
+    constexpr static const int imageWidth = 1200 / 4;
     constexpr static const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
 
 	RayTracer() {
@@ -25,7 +24,7 @@ public:
 	}
 
 private:
-    int numOfCores = std::thread::hardware_concurrency();
+    unsigned int numOfCores = std::thread::hardware_concurrency();
     int numOfBatchCols = std::ceil(std::sqrt(numOfCores));
     int numOfBatchRows = std::ceil(numOfCores / (double)numOfBatchCols);
     int batchRowSize = imageWidth / numOfBatchRows;
@@ -71,7 +70,7 @@ protected:
         return true;
 	}
 
-    void SaveToBuffer(int i, int j, Color &c, int samplesPerPixel)
+    void SaveToBuffer(int i, int j, Color &c)
     {
         double r = c.r();
         double g = c.g();
@@ -86,7 +85,7 @@ protected:
         image.SetPixel(i, j, r, g, b);
     }
 
-    void DrawColor(const olc::vi2d pos, Color &c)
+    void DrawColor(const olc::vi2d &pos, Color &c)
     {
         int ir = std::round(Arithmetics::Scale(c.r(), 0.0, 1.0, 0, 255));
         int ig = std::round(Arithmetics::Scale(c.g(), 0.0, 1.0, 0, 255));
@@ -107,14 +106,14 @@ protected:
             {
                 Color pixelColor(0, 0, 0);
                 for (int s = 0; s < samplesPerPixel; ++s) {
-                    // This gets a percentage so we can traverse the viewport.
+                    // This gets a percentage, so we can traverse the viewport.
                     auto u = (i + Random::RandomDouble()) / (imageWidth-1);
                     auto v = (j + Random::RandomDouble()) / (imageHeight-1);
 
                     Ray r = cam.GetRay(u, v);
                     pixelColor += GetRayColor(r, maxRayRecursionDepth);
                 }
-                SaveToBuffer(i, j, pixelColor, samplesPerPixel);
+                SaveToBuffer(i, j, pixelColor);
             }
         }
         printf("Thread:(%d, %d) finished\n", row, col);
@@ -145,7 +144,7 @@ protected:
             {
                 DrawColor(olc::vi2d(i, j), image.GetPixel(i, j));
             }
-            LogProgress((double) (j+1) / imageHeight);
+            LogProgress((float) (j+1) / imageHeight);
         }
     }
 
@@ -158,34 +157,35 @@ protected:
             {
                 writer.WriteRow(image.GetPixel(i,j), samplesPerPixel);
             }
-            LogProgress((double) (j+1) / imageHeight);
+            LogProgress((float) (j+1) / imageHeight);
         }
         writer.Close();
     }
 
     Color GetRayColor(const Ray &r, int depth) const
     {
-        if (depth <= 0)
-            return Color(0, 0, 0);
+        if (depth <= 0) {
+            return {0, 0, 0};
+        }
 
         HitRecord rec;
         // 0.001 instead of 0 so we can offset for float approximation.
-        // Solves the shadow acne problem (yup, thats the fuckin name)
+        // Solves the shadow acne problem (yup, that's the fucking name)
         if (world.CheckHit(r, 0.001, Geometry::infinity, rec)) {
             Ray scattered;
             Color attenuation;
             if (rec.material->Scatter(r, rec, attenuation, scattered)) {
                 return attenuation * GetRayColor(scattered, depth-1);
             }
-            return Color(0,0,0);
+            return {0,0,0};
         }
 
         Vec3 unitDirection = r.GetDirection().UnitVector();
         auto t = 0.5 * (unitDirection.y() + 1.0);
-        return Color((1.0 - t) * Color(0.5, 0.7, 1.0) + t * Color(1.0, 1.0, 1.0)); // lerp
+        return {(1.0 - t) * Color(0.5, 0.7, 1.0) + t * Color(1.0, 1.0, 1.0)}; // lerp
     }
 
-    void LogProgress(float perc) const
+    static void LogProgress(float perc)
     {
         if (!(perc >= 0.0f && perc <= 1.0f)) {
             throw std::invalid_argument("Progress percentage value must be between 0.0f and 1.0f range.");
@@ -210,7 +210,8 @@ int main(int argc, char const *argv[])
 {
 	RayTracer engine;
 
-	engine.Construct(RayTracer::imageWidth, RayTracer::imageHeight, 4, 4);
+    const int scale = 6;
+	engine.Construct(RayTracer::imageWidth, RayTracer::imageHeight, scale, scale);
 	engine.Start();
 
 	return 0;

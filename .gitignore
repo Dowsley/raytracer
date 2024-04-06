@@ -1,11 +1,6 @@
 \.vscode
-Makefile
 \.DS_Store
 \output.exe
-CMakeFiles
-CMakeLists.txt
-CMakeCache.txt
-cmake_install.cmake
 tmp
 notes
 log.txt
@@ -13,3 +8,33 @@ log.txt
 \output.ppm
 *.dSYM
 \graphics
+
+# CLion-specific and CMake files
+cmake-build-*/
+.idea/
+
+# Build outputs
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Temporary files
+*.swp
+*~
+.*.swp
+.*.swo
+
+# Other files to ignore
+.DS_Store
+Thumbs.db
